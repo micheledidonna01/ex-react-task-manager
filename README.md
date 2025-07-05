@@ -67,3 +67,16 @@ Visualizzare l'elenco dei task in una tabella e ottimizzare il rendering con Rea
  - "Done" → verde
 
 5. Utilizzare React.memo() su TaskRow.jsx per ottimizzare le prestazioni ed evitare render inutili.
+
+
+## 📌 Milestone 4 - Creazione del Custom Hook useTasks() (GET)
+Creare un custom hook per centralizzare la gestione dei task e semplificare l'accesso ai dati.
+
+
+1. Creare un hook useTasks() che recupera i task iniziali con una richiesta GET a /tasks e li memorizza in uno stato locale (useState).
+
+2. Definire le funzioni addTask, removeTask, updateTask all'interno di useTasks(), lasciandole vuote per ora.
+
+3. Rendere disponibili le funzioni e la lista dei task restituendole come valore dell'hook.
+
+4. Integrare useTasks() nel GlobalContext, in modo che tutti i componenti possano accedere ai task e alle funzioni di gestione.
