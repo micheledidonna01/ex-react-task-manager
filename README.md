@@ -31,3 +31,21 @@ Questo URL dovrà essere utilizzato per configurare il frontend.
 4. Aggiungere una barra di navigazione con NavLink, per permettere all'utente di spostarsi tra le pagine.
 
 5. Definire le rotte con Routes e Route, associando ogni percorso alla rispettiva pagina.
+
+## 📌 Milestone 2 - Setup Context API e Fetch Iniziale
+Creare un contesto globale per la gestione dei dati e recuperare la lista dei task dall'API.
+
+
+1. Salvare l'URL dell'API nel file .env del progetto frontend:
+- Creare un file .env nella cartella del progetto frontend e aggiungere lo URL della API raccolto alla Milestone 1.
+- In questo modo, l'URL sarà accessibile in tutto il progetto senza doverlo scrivere manualmente nel codice.
+
+2. Creare un Context API (GlobalContext) per gestire lo stato globale dell'applicazione.
+
+3. Definire uno useState all'interno del provider, per memorizzare la lista dei task.
+
+4. Effettuare una richiesta GET a /tasks al caricamento dell'app, utilizzando useEffect, e salvare i dati nello stato.
+
+5. Stampare in console i dati ricevuti per verificare il corretto recupero delle informazioni.
+
+6. Rendere disponibile il GlobalContext.Provider in App.jsx, avvolgendo l'intera applicazione.
