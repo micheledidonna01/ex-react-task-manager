@@ -1,32 +1,43 @@
 import { createContext, useEffect, useState } from "react";
+import useTasks from "../customhooks/useTasks";
 
 export const GlobalContext = createContext();
-console.log(GlobalContext);
+
+
 export function GlobalProvider ({ children }) {
-    const [tasks, setTasks] = useState([]);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(false);
+    const { tasks, 
+            getTasks,
+            setTasks, 
+            error, 
+            loading, 
+            addTask, 
+            removeTask, 
+            updateTask 
+            } = useTasks();
+    // const [tasks, setTasks] = useState([]);
+    // const [loading, setLoading] = useState(false);
+    // const [error, setError] = useState(false);
 
-    const getTasks = async () => {
-        setLoading(true);
-        try {
-            const response = await fetch(import.meta.env.VITE_API_URL_TASK);
-            const data = await response.json();
-            setTasks(data);
-        } catch (error) {
-            setError(true);
-            console.error('Error fetching tasks:', error);
-        } finally {
-            setLoading(false);
-        }
-    };
+    // const getTasks = async () => {
+    //     setLoading(true);
+    //     try {
+    //         const response = await fetch(import.meta.env.VITE_API_URL_TASK);
+    //         const data = await response.json();
+    //         setTasks(data);
+    //     } catch (error) {
+    //         setError(true);
+    //         console.error('Error fetching tasks:', error);
+    //     } finally {
+    //         setLoading(false);
+    //     }
+    // };
 
-    useEffect(() => {
-        getTasks();
-    }, []);
+    // useEffect(() => {
+    //     getTasks();
+    // }, []);
 
     return (
-        <GlobalContext.Provider value={{ tasks, loading, error, getTasks, setTasks }}>
+        <GlobalContext.Provider value={{ tasks, loading, error, getTasks, setTasks, addTask, removeTask, updateTask }}>
             {children}
         </GlobalContext.Provider>
     );

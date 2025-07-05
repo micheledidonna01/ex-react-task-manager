@@ -25,7 +25,7 @@ const TaskList = () => {
     }
 
     return <>
-        <h1>Lista task</h1>
+        <h1 className="m-4">Lista task</h1>
         <div className="m-4">
             <div className="d-flex justify-content-between border">
                 <div className="col-4 p-2 border">Nome</div>

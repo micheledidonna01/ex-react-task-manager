@@ -11,7 +11,7 @@ const TaskRow = () => {
     const navigate = useNavigate();
 
     return <>
-    <div>
+    <div className="d-flex justify-content-between m-4"> 
         <h1>task {id}</h1>
         <button className="btn btn-primary" onClick={() => navigate(-1)}>Back to Tasks List</button>
     </div>
