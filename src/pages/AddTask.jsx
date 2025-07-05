@@ -1,17 +1,41 @@
 import { useNavigate } from "react-router-dom";
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { useMemo, useRef, useState } from "react";
 
 const AddTask = () => {
 
 
     const navigate = useNavigate();
 
-
+    const [title, setTitle] = useState("");
+    const description = useRef();
+    const status = useRef();
+    const symbols = ("!@#$%^&*()-_=+[]{}|;:'\\,.<>?/`~\"").split('');
+    const space = " ";
+    
+    const titleIsValid = useMemo(()=> {
+        const notASymbols = title.split('').some(char => symbols.includes(char));
+        const notASpace = title.split('').some(char => space.includes(char));
+        if(!notASymbols && !notASpace && title.length > 3){
+            return true
+        };
+        return false;
+    }, [title])
+    
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        console.log(`
+            title: ${title},
+            description: ${description.current.value},
+            status: ${status.current.value}    
+        `)
+    }
+    
 
     return <>
         <h1 className="mb-5">Aggiungi task</h1>
 
-        <form className="mb-5 d-flex flex-wrap gap-3 justify-content-center">
+        <form className="mb-5 d-flex flex-wrap gap-3 justify-content-center" onSubmit={handleSubmit}>
             <div className="col-12">
                 <label htmlFor="title" className="visually-hidden">Title:</label>
                 <input
@@ -20,7 +44,11 @@ const AddTask = () => {
                     name="title"
                     className="form-control"
                     placeholder="Enter task title"
-                    required />
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    required 
+                />
+                {title.length === 0 ? <p></p> : titleIsValid ? <p className="text-success">title is valid</p> : <p className="text-danger">title is not valid</p>}
             </div>
             <div className="col-12">
                 <label htmlFor="description" className="visually-hidden">Description:</label>
@@ -31,15 +59,16 @@ const AddTask = () => {
                     className="form-control"
                     placeholder="Enter task description"
                     rows="6"
+                    ref={description}
                     required
                 >
                 </textarea>
             </div>
             <div className="col-12">
                 <label htmlFor="status" className="visually-hidden">Status:</label>
-                <select id="status" name="status" className="form-control">
-                    <option value="">Choose a status</option>
+                <select id="status" name="status" className="form-control" ref={status}>
                     <option value="to-do">To do</option>
+                    <option value="done">Done</option>
                     <option value="doing">Doing</option>
                 </select>
             </div>
