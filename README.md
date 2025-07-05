@@ -1,12 +1,33 @@
-# React + Vite
+# EX  - Task Manager Avanzato
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## 📌 Milestone 1 - Setup e Routing
+Clonare il backend del progetto, impostare il frontend con Vite e configurare il routing con react-router-dom.
 
-Currently, two official plugins are available:
+1. Clonare e avviare il backend:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Per gestire i task, utilizzeremo un backend già pronto.
 
-## Expanding the ESLint configuration
+- Cloniamo il repository
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+https://github.com/boolean-it/react-task-manager-back
+e avviamo il server con:
+
+npm install
+npm run start
+- Dopo qualche secondo, nel terminale apparirà un messaggio simile a:
+
+✅ Server in ascolto su http://localhost:3001
+Questo URL dovrà essere utilizzato per configurare il frontend.
+
+2. Impostiamo il frontend:
+
+-  Creiamo il progetto con Vite.
+- Installiamo react-router-dom nel progetto.
+- Creiamo il router principale in App.jsx utilizzando BrowserRouter.
+3. Definiamo due pagine principali:
+
+- Lista dei Task (TaskList.jsx) → mostrerà l'elenco dei task.
+- Aggiungi Task (AddTask.jsx) → conterrà il form per aggiungere un nuovo task.
+4. Aggiungere una barra di navigazione con NavLink, per permettere all'utente di spostarsi tra le pagine.
+
+5. Definire le rotte con Routes e Route, associando ogni percorso alla rispettiva pagina.
