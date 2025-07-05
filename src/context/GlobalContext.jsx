@@ -6,11 +6,11 @@ export function GlobalProvider ({ children }) {
     const [tasks, setTasks] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(false);
-    console.log(import.meta.env.VITE_API_URL_TASK)
+
     const getTasks = async () => {
         setLoading(true);
         try {
-            const response = await fetch('http://localhost:3001/tasks');
+            const response = await fetch(import.meta.env.VITE_API_URL_TASK);
             const data = await response.json();
             setTasks(data);
         } catch (error) {
