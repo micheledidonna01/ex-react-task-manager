@@ -221,3 +221,59 @@ Creare un componente Modal riutilizzabile e utilizzarlo per confermare l’elimi
 2. Integrare il componente Modal in TaskDetail.jsx per confermare l'eliminazione:
  - Quando l’utente clicca su "Elimina Task", deve aprirsi la modale di conferma.
  - Se l’utente conferma, vengono eseguite le stesse operazioni della Milestone 8.
+
+
+## 📌 Milestone 10 - Modale e Funzione di Modifica Task (PUT)
+Creare una modale per modificare i dettagli di un task e aggiornare i dati tramite API.
+
+
+1. Completare la funzione updateTask in useTasks():
+
+ - La funzione deve ricevere un oggetto updatedTask e effettuare una chiamata API PUT /tasks/:id.
+
+ - La chiamata API restituisce un oggetto con la seguente struttura:
+
+```
+
+In caso di successo:
+
+{ success: true, task: /* la task aggiornata */ }
+In caso di errore:
+
+{ success: false, message: "Messaggio di errore" }
+
+```
+
+ - La funzione updateTask deve controllare il valore di success nella risposta:
+
+  - Se success è true, aggiornare la task nello stato globale.
+  - Se success è false, lanciare un errore con message come testo.
+
+2. Creare il componente EditTaskModal.jsx:
+
+ - Deve accettare i seguenti props:
+  - show (boolean): determina se la modale è visibile.
+  - onClose (function): funzione per chiudere la modale.
+  - task (object): oggetto che rappresenta il task da modificare.
+  - onSave (function): funzione che viene chiamata al salvataggio con il task aggiornato.
+- Utilizzare il componente Modal per creare la modale di modifica, passandogli i seguenti valori:
+  - title: "Modifica Task".
+  - content: un form contenente i campi del task da modificare.
+  - confirmText: "Salva".
+  - onConfirm: deve attivare il submit del form.
+
+ - Strutturare il form all'interno della modale, includendo i seguenti campi:
+  - Nome (title) → Input di testo controllato (useState).
+  - Descrizione (description) → Textarea controllata (useState).
+  - Stato (status) → Select controllata (useState) con opzioni "To do", "Doing", "Done".
+ - L'onSubmit del form deve eseguire onSave, passandogli la task modificata.
+
+3. Integrare EditTaskModal in TaskDetail.jsx, con un nuovo bottone "Modifica Task":
+
+ - Quando l’utente clicca su "Modifica", si apre la modale con il form precompilato.
+ - L'onSave di EditTaskModal deve eseguire la funzione updateTask di useTasks(), passando la task modificata.
+ - Se la funzione esegue correttamente l'operazione:
+  - Mostrare un alert di conferma dell’avvenuta modifica.
+  - Chiudere la modale.
+ - Se la funzione lancia un errore:
+  - Mostrare un alert con il messaggio di errore ricevuto.
