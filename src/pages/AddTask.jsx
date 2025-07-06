@@ -1,15 +1,23 @@
 import { useNavigate } from "react-router-dom";
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { useMemo, useRef, useState } from "react";
+import { useContext, useEffect, useMemo, useRef, useState } from "react";
+import { GlobalContext } from "../context/GlobalContext";
+import axios from "axios";
 
 const AddTask = () => {
 
+    const { addTask, getTasks, tasks } = useContext(GlobalContext);
+
+    // console.log(addTask);
+    // console.log(tasks);
 
     const navigate = useNavigate();
 
     const [title, setTitle] = useState("");
     const description = useRef();
     const status = useRef();
+
+
     const symbols = ("!@#$%^&*()-_=+[]{}|;:'\\,.<>?/`~\"").split('');
     const space = " ";
     
@@ -22,15 +30,33 @@ const AddTask = () => {
         return false;
     }, [title])
     
+
+
     const handleSubmit = (e) => {
         e.preventDefault();
+        let formData = {
+            title,
+            description: description.current.value,
+            status: status.current.value,
+        };
+    
         console.log(`
             title: ${title},
             description: ${description.current.value},
             status: ${status.current.value}    
         `)
+
+        addTask(formData);
+        description.current.value = '';
+        status.current.value = 'To do';
+        setTitle('');
+        
     }
+
     
+    useEffect(()=> {
+        getTasks();
+    }, [tasks])
 
     return <>
         <h1 className="mb-5">Aggiungi task</h1>
@@ -67,12 +93,12 @@ const AddTask = () => {
             <div className="col-12">
                 <label htmlFor="status" className="visually-hidden">Status:</label>
                 <select id="status" name="status" className="form-control" ref={status}>
-                    <option value="to-do">To do</option>
-                    <option value="done">Done</option>
-                    <option value="doing">Doing</option>
+                    <option value="To do">To do</option>
+                    <option value="Done">Done</option>
+                    <option value="Doing">Doing</option>
                 </select>
             </div>
-            <button type="submit" className="rounded">Add Task</button>
+            <button type="submit" className="rounded" disabled={!titleIsValid}>Add Task</button>
         </form>
 
         <button onClick={() => navigate('/')}>Lista tasks</button>
