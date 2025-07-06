@@ -33,13 +33,14 @@ const TaskList = () => {
                 <div className="col-4 p-2 border">Data di Creazione</div>
             </div>
             {tasks.map(task => (
-                <Link to={`/${task.id}`} key={task.id} className="text-decoration-none">
-                <div className="d-flex justify-content-between border text-dark" >
-                    <div className="col-4 p-2 border">{task.title}</div>
+                    <div className="d-flex justify-content-between border text-dark" key={task.id} >
+                    <Link to={`/${task.id}`} className="text-decoration-none col-4 p-2 border">
+                        <div>{task.title}</div>
+                    </Link>
                         <div className={`col-4 p-2 border ${task.status === "To do" ? "bg-danger" : task.status === "Doing" ? "bg-warning" : task.status === "Done" ? "bg-success" : ""}`}>{task.status}</div>
                     <div className="col-4 p-2 border">{new Date(task.createdAt).toLocaleDateString()}</div>
                 </div>
-                </Link>
+                
             ))}
         </div>
         {/* <ul>

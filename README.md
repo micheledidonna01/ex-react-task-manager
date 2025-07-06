@@ -145,3 +145,21 @@ Se success è false, lanciare un errore con message come testo.
   - Resettare il form.
  - Se la funzione lancia un errore:
   - Mostrare un alert con il messaggio di errore ricevuto.
+
+
+## 📌 Milestone 7 - Creazione della Pagina Dettaglio Task
+Creare la pagina TaskDetail.jsx, che visualizza i dettagli di un task
+
+
+1. Aggiornare TaskRow.jsx
+ - Rendere il title un link a /task/:id, in modo che cliccando sul nome del task si venga reindirizzati alla pagina di dettaglio.
+
+2. Aggiornare App.jsx per aggiungere la rotta TaskDetail.jsx
+ - Aggiungere la rotta /task/:id che caricherà il componente TaskDetail.jsx.
+
+3. Creare TaskDetail.jsx per mostrare:
+ - Nome (title)
+ - Descrizione (description)
+ - Stato (status)
+ - Data di creazione (createdAt)
+ - Un bottone "Elimina Task", che per ora stampa solo "Elimino task" in console.
