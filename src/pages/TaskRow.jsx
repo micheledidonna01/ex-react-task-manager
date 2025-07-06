@@ -1,15 +1,16 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { GlobalContext } from "../context/GlobalContext";
 import { Link } from "react-router-dom";
+import Modal from "../components/modal";
 
 const TaskRow = () => {
     const { id } = useParams();
     const { tasks, removeTask, getTasks } = useContext(GlobalContext);
-    const searchTask = tasks.find(task => task.id === parseInt(id))
+    const searchTask = tasks.find(task => task.id === parseInt(id)) || null;
     console.log(searchTask);
     const navigate = useNavigate();
-    
+
     const fnRemoveTask = () => {
         removeTask(id);
         navigate('/');
@@ -19,6 +20,9 @@ const TaskRow = () => {
         getTasks();
     }, [])
 
+
+    const [modalOpen, setModalOpen] = useState(false);
+    
 
     return <>
         <div className="d-flex justify-content-between m-4">
@@ -56,10 +60,44 @@ const TaskRow = () => {
             )}
 
             <div className="text-center">
-                
-                    <button className="btn btn-danger mt-4" onClick={fnRemoveTask}>Elimina Task</button>
 
+                <button className="btn btn-danger mt-4" onClick={() => setModalOpen(true) }>Elimina Task</button>
+                {/* <button type="button" className="btn btn-primary" onClick={() => setModalOpen(true)}>
+                    Launch demo modal
+                </button> */}
+
+                <Modal
+                    isOpen={modalOpen}
+                    onClose={() => setModalOpen(false)}
+                    onConfirm={fnRemoveTask}
+                    content={searchTask}
+                />
+
+                
             </div>
+
+            {/* {searchTask ? (
+
+            <div className="modal" tabIndex="-1">
+                <div className="modal-dialog">
+                    <div className="modal-content">
+                        <div className="modal-header">
+                            <h5 className="modal-title"></h5>
+                            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div className="modal-body">
+                            {searchTask.description}
+                            <p>Vuoi eliminare definitivamente questa task?</p>
+                        </div>
+                        <div className="modal-footer">
+                            <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="button" className="btn btn-primary">Confirm</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            ): <p>Non ho trovato niente</p>} */}
 
 
         </div>
