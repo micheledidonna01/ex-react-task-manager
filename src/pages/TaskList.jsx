@@ -1,20 +1,21 @@
 import { useNavigate } from "react-router-dom";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { GlobalContext } from "../context/GlobalContext";
 import TaskRow from "./TaskRow";
 import { Link } from "react-router-dom";
 
 const TaskList = () => {
 
-    const { tasks, loading, error } = useContext(GlobalContext);
+    const { loading, error, getTasks, tasks } = useContext(GlobalContext);
     const navigate = useNavigate();
 
     // tasks.map((task => {
     //     // Convert createdAt to a more readable format
     //     task.createdAt = new Date(task.createdAt).toLocaleDateString();
     // }));
-
-    // useEffect(() => getTasks, []);
+    // useEffect(() => {
+    //     getTasks()
+    // }, [tasks])
 
     if (loading) {
         return <p>Loading...</p>;

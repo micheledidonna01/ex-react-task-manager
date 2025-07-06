@@ -2,7 +2,6 @@ import { useNavigate } from "react-router-dom";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { GlobalContext } from "../context/GlobalContext";
-import axios from "axios";
 
 const AddTask = () => {
 

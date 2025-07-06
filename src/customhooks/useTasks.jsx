@@ -1,12 +1,13 @@
 
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-import { data } from 'react-router-dom';
 
 function useTasks() {
     const [tasks, setTasks] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(false);
+
+
 
     const getTasks = async () => {
         setLoading(true);
@@ -20,7 +21,7 @@ function useTasks() {
         } catch (error) {
             setError(true);
             console.error('Error fetching tasks:', error);
-        }finally {
+        } finally {
             setLoading(false);
         }
 
@@ -40,8 +41,17 @@ function useTasks() {
             });
     };
 
-    const removeTask = () => {
-
+    const removeTask = (id) => {
+        axios.delete(`${import.meta.env.VITE_API_URL_TASK}/${id}`)
+            .then(res => {
+                setTasks((prev) => prev.filter(task => task.id !== parseInt(id)))
+                console.log(res.status);
+                alert('Task Eliminato con successo!')
+            })
+            .catch(err => {
+                alert('Problemi con l\'eliminazione del task');
+                console.error(err);
+            })
     };
 
     const updateTask = () => {

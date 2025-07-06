@@ -1,14 +1,24 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { GlobalContext } from "../context/GlobalContext";
-
+import { Link } from "react-router-dom";
 
 const TaskRow = () => {
     const { id } = useParams();
-    const { tasks } = useContext(GlobalContext);
+    const { tasks, removeTask, getTasks } = useContext(GlobalContext);
     const searchTask = tasks.find(task => task.id === parseInt(id))
     console.log(searchTask);
     const navigate = useNavigate();
+    
+    const fnRemoveTask = () => {
+        removeTask(id);
+        navigate('/');
+    }
+
+    useEffect(() => {
+        getTasks();
+    }, [])
+
 
     return <>
         <div className="d-flex justify-content-between m-4">
@@ -18,7 +28,7 @@ const TaskRow = () => {
 
 
         <div className="m-4">
-            
+
             <div className="d-flex justify-content-between border flex-wrap fw-bold">
                 <div className="col-6 p-2 border">Nome</div>
                 <div className="col-6 p-2 border">Stato</div>
@@ -46,7 +56,9 @@ const TaskRow = () => {
             )}
 
             <div className="text-center">
-                <button className="btn btn-danger mt-4">Elimina Task</button>
+                
+                    <button className="btn btn-danger mt-4" onClick={fnRemoveTask}>Elimina Task</button>
+
             </div>
 
 
