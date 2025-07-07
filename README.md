@@ -297,3 +297,22 @@ Implementare un sistema di ordinamento nella tabella delle task, permettendo all
  - Ordinamento per status → ordine predefinito: "To do" < "Doing" < "Done".
  - Ordinamento per createdAt → confrontando il valore numerico della data (.getTime()).
  - Applicare sortOrder per definire se l’ordine è crescente o decrescente.
+
+
+## 📌 Milestone 12 - Ricerca dei Task con Debounce
+Aggiungere un campo di ricerca che permette all’utente di filtrare i task in base al nome, ottimizzando le prestazioni con debounce.
+
+
+1. Creare un input di ricerca controllato
+ - Aggiungere un input di ricerca controllato in TaskList.jsx sopra la tabella, in modo che l’utente possa digitare per cercare un task.
+ - Creare uno stato searchQuery (useState) per memorizzare il valore dell'input.
+
+2. Modificare l'useMemo() per filtrare e ordinare i task
+ - Applicare il filtraggio basato su searchQuery.
+ - La ricerca deve essere case insensitive.
+ - Ordinare i risultati in base ai criteri esistenti (es. nome, stato, data di creazione).
+
+3. Aggiungere il debounce per migliorare le prestazioni
+ - Creare una funzione debounce con setTimeout() per ritardare l’aggiornamento di searchQuery.
+ - Usare useCallback() per memorizzare la funzione di debounce e prevenire inutili ricalcoli.
+

@@ -10,11 +10,11 @@ const TaskList = () => {
     const navigate = useNavigate();
 
     const [sortBy, setSortBy] = useState("");
-    const [sortOrder, setSortOrder] =useState(1); 
+    const [sortOrder, setSortOrder] = useState(1);
 
     const copyTasks = [...tasks];
     console.log(copyTasks)
-    const orderByTitle = [...tasks].sort((a,b) => {
+    const orderByTitle = [...tasks].sort((a, b) => {
         if (sortOrder === 1) {
             return a.title.localeCompare(b.title)
         } else if (sortOrder === -1) {
@@ -28,15 +28,15 @@ const TaskList = () => {
         } else if (sortOrder === -1) {
             return b.status.localeCompare(a.status)
         }
-        
+
     });
     console.log(orderByStatus)
     const orderByData = [...tasks].sort((a, b) => {
         const dataA = new Date(a.createdAt).getDate();
         const dataB = new Date(b.createdAt).getDate();
-        if(sortOrder === 1){
+        if (sortOrder === 1) {
             return dataA - dataB;
-        }else if(sortOrder === -1){
+        } else if (sortOrder === -1) {
             return dataB - dataA
         }
     })
@@ -76,21 +76,29 @@ const TaskList = () => {
         return <p>Error loading tasks.</p>;
     }
 
-    
+
     return <>
         <h1 className="m-4">Lista task</h1>
         <div className="m-4">
-            <div>
-                <select value={sortBy} onChange={e => setSortBy(e.target.value)}>
-                    <option value="">---</option>
-                    <option value="createdAt">Ordine data</option>
-                    <option value="title">Ordine titolo</option>
-                    <option value="status">Ordine stato</option>
-                </select>
-                <select value={sortOrder} onChange={e => setSortOrder(parseInt(e.target.value))}>
-                    <option value="1">Ordine crescente</option>
-                    <option value="-1">Ordine decrescente</option>
-                </select>
+            <div className="d-flex mt-5 mb-3">
+                <div className="col-4 me-2">
+
+                    <select value={sortBy} onChange={e => setSortBy(e.target.value)} className="form-control">
+                        <option value="">---</option>
+                        <option value="createdAt">Filtra per data</option>
+                        <option value="title">Filtra per titolo</option>
+                        <option value="status">Filtra per stato</option>
+                    </select>
+                </div>
+
+                <div className="col-4">
+
+                    <select value={sortOrder} onChange={e => setSortOrder(parseInt(e.target.value))} className="form-control">
+                        <option value="1">Ordine crescente</option>
+                        <option value="-1">Ordine decrescente</option>
+                    </select>
+                </div>
+
             </div>
             <div className="d-flex justify-content-between border">
                 <div className="col-4 p-2 border">Nome</div>
@@ -99,14 +107,14 @@ const TaskList = () => {
             </div>
 
             {sortBy === 'createdAt' ? orderByData.map(task => (
-                    <div className="d-flex justify-content-between border text-dark" key={task.id} >
+                <div className="d-flex justify-content-between border text-dark" key={task.id} >
                     <Link to={`/${task.id}`} className="text-decoration-none col-4 p-2 border">
                         <div>{task.title}</div>
                     </Link>
-                        <div className={`col-4 p-2 border ${task.status === "To do" ? "bg-danger" : task.status === "Doing" ? "bg-warning" : task.status === "Done" ? "bg-success" : ""}`}>{task.status}</div>
+                    <div className={`col-4 p-2 border ${task.status === "To do" ? "bg-danger" : task.status === "Doing" ? "bg-warning" : task.status === "Done" ? "bg-success" : ""}`}>{task.status}</div>
                     <div className="col-4 p-2 border">{new Date(task.createdAt).toLocaleDateString()}</div>
                 </div>
-                
+
             )) : sortBy === '' ? tasks.map(task => (
                 <div className="d-flex justify-content-between border text-dark" key={task.id} >
                     <Link to={`/${task.id}`} className="text-decoration-none col-4 p-2 border">
@@ -117,13 +125,13 @@ const TaskList = () => {
                 </div>
 
             )) : sortBy === 'title' ? orderByTitle.map(task => (
-            <div className="d-flex justify-content-between border text-dark" key={task.id} >
-                <Link to={`/${task.id}`} className="text-decoration-none col-4 p-2 border">
-                    <div>{task.title}</div>
-                </Link>
-                <div className={`col-4 p-2 border ${task.status === "To do" ? "bg-danger" : task.status === "Doing" ? "bg-warning" : task.status === "Done" ? "bg-success" : ""}`}>{task.status}</div>
-                <div className="col-4 p-2 border">{new Date(task.createdAt).toLocaleDateString()}</div>
-            </div>
+                <div className="d-flex justify-content-between border text-dark" key={task.id} >
+                    <Link to={`/${task.id}`} className="text-decoration-none col-4 p-2 border">
+                        <div>{task.title}</div>
+                    </Link>
+                    <div className={`col-4 p-2 border ${task.status === "To do" ? "bg-danger" : task.status === "Doing" ? "bg-warning" : task.status === "Done" ? "bg-success" : ""}`}>{task.status}</div>
+                    <div className="col-4 p-2 border">{new Date(task.createdAt).toLocaleDateString()}</div>
+                </div>
 
             )) : sortBy === 'status' && orderByStatus.map(task => (
                 <div className="d-flex justify-content-between border text-dark" key={task.id} >
@@ -134,7 +142,7 @@ const TaskList = () => {
                     <div className="col-4 p-2 border">{new Date(task.createdAt).toLocaleDateString()}</div>
                 </div>
 
-            )) }
+            ))}
         </div>
         {/* <ul>
             {tasks.length <= 0 ? <p>No tasks available</p> : tasks.map(task => (
