@@ -54,9 +54,25 @@ function useTasks() {
             })
     };
 
-    const updateTask = () => {
+    const updateTask = (id, updateForm) => {
+        axios.put(`${import.meta.env.VITE_API_URL_TASK}/${id}`, updateForm)
+            .then(res => {
+                setTasks(tasks.map(t => {
+                    if (t.id === parseInt(id)) {
+                        return {
+                            ...t,
+                            ...updateForm
+                        }
+                    }
+                    return t;
+                }))
+                console.log(res.data);
 
+            })
+            .catch(err => console.error(err))
     };
+
+
 
     useEffect(() => {
         getTasks();

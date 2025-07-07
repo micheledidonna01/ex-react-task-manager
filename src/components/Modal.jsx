@@ -5,7 +5,7 @@ const Modal = ({isOpen, onClose, onConfirm, content}) => {
     if(!isOpen) return null;
 
     return <>
-        return (
+        
         <div className="modal-overlay d-flex justify-content-center align-items-center">
             <div className="modal-content bg-white w-50">
                 <div className="modal-header mb-4">
@@ -24,7 +24,7 @@ const Modal = ({isOpen, onClose, onConfirm, content}) => {
                 </div>
             </div>
         </div>
-        );
+        
     </>
 }
 
