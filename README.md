@@ -316,3 +316,54 @@ Aggiungere un campo di ricerca che permette all’utente di filtrare i task in b
  - Creare una funzione debounce con setTimeout() per ritardare l’aggiornamento di searchQuery.
  - Usare useCallback() per memorizzare la funzione di debounce e prevenire inutili ricalcoli.
 
+## 🎯 BONUS 1 - Selezione ed Eliminazione Multipla di Task
+Implementare un sistema di multi-selezione e cancellazione di Task.
+
+
+1. Modificare TaskRow.jsx per supportare la selezione
+ - Aggiungere le prop:
+  - checked: indica se la task è selezionata.
+  - onToggle: funzione chiamata quando la checkbox viene cliccata.
+ - Inserire una checkbox accanto al nome della task, controllata tramite checked e che richiama onToggle(task.id).
+
+2. Gestire lo stato selectedTaskIds in TaskList.jsx
+- Creare uno stato con useState([]) per memorizzare gli ID delle task selezionate.
+- Creare una funzione toggleSelection(taskId) che aggiorna selectedTaskIds, aggiungendo o rimuovendo l’ID della task.
+- Passare a TaskRow il checked e toggleSelection come onToggle.
+
+3. Mostrare il pulsante "Elimina Selezionate"
+- Mostrare un pulsante "Elimina Selezionate" solo se l’array selectedTaskIds contiene almeno un elemento.
+
+4. Implementare la funzione removeMultipleTasks in useTasks.js
+- La funzione deve ricevere un array di ID e inviare più richieste DELETE /tasks/{id} in parallelo.
+- Utilizzare Promise.allSettled() per gestire successi ed errori senza interrompere il processo.
+- Per ogni richiesta che ha successo, la task deve essere rimossa dallo stato locale.
+- Se almeno una richiesta fallisce, lanciare un errore con un messaggio che mostra gli ID non eliminati.
+
+5. Gestire l’eliminazione multipla in TaskList.jsx
+- Al click su "Elimina Selezionate", chiamare removeMultipleTasks passando selectedTaskIds.
+- Se la funzione esegue correttamente l'operazione:
+  - Mostrare un alert di conferma dell’avvenuta eliminazione multipla.
+  - Svuotare selectedTaskIds.
+- Se la funzione lancia un errore:
+  - Mostrare un alert con il messaggio di errore ricevuto.
+
+## 🎯 BONUS 2 - Funzionalità Aggiuntive
+Aggiungere funzionalità di personalizzazione, formattazione, validazione e centralizzazione dello stato.
+
+
+1. Usare dayjs per formattare le date in formato italiano (DD/MM/YYYY)
+- Installare dayjs con il comando:
+npm install dayjs
+
+- Modificare TaskRow.jsx e TaskDetail.jsx per visualizzare la data formattata in formato italiano (DD/MM/YYYY).
+
+
+2. Aggiornare addTask e updateTask in useTasks.js in modo che:
+- Prima di effettuare la chiamata API, controllino se esiste già un task con lo stesso nome.
+- Se il nome è già presente, lanciare un errore e impedire la creazione/modifica.
+
+3. Implementare useReducer per gestire lo stato dei task
+- Sostituire useState con useReducer in useTasks.js.
+- Creare un tasksReducer.js per gestire le azioni (LOAD_TASKS, ADD_TASK, REMOVE_TASK, UPDATE_TASK, REMOVE_MULTIPLE_TASKS).
+- Modificare tutte le funzioni (addTask, removeTask, updateTask, removeMultipleTasks) e il fetch iniziale per aggiornare lo stato attraverso il reducer.
