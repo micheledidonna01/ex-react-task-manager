@@ -1,8 +1,7 @@
 import { useNavigate } from "react-router-dom";
-import { useContext, useEffect, useState, useCallback } from "react";
+import { useContext, useState, useCallback, useMemo } from "react";
 import { GlobalContext } from "../context/GlobalContext";
-import { Link } from "react-router-dom";
-
+import TaskDetail from "../components/TaskDetail";
 function debounce(callback, delay) {
     let timer;
     return (...args) => {
@@ -11,44 +10,59 @@ function debounce(callback, delay) {
             callback(...args);
         }, delay);
     };
-}
+}   
+
 
 const TaskList = () => {
-    const { loading, error, tasks } = useContext(GlobalContext);
+    const { loading, error, tasks, removeMultipleTasks } = useContext(GlobalContext);
     const navigate = useNavigate();
 
     const [sortBy, setSortBy] = useState("");
     const [sortOrder, setSortOrder] = useState(1);
     const [search, setSearch] = useState("");
-    const [filteredTasks, setFilteredTasks] = useState(tasks);
 
     // 🔁 Filtro con debounce
-    const handleSearch = useCallback(
-        debounce((value) => {
-            const filtered = tasks.filter((task) =>
-                task.title.toLowerCase().includes(value.toLowerCase())
-            );
-            setFilteredTasks(filtered);
-        }, 500),
-        [tasks]
-    );
+    const debounceSearch = useCallback(debounce(setSearch, 500),[]);
 
-    // 🔄 aggiorna filtro al cambiamento
-    useEffect(() => {
-        handleSearch(search);
-    }, [search, handleSearch]);
 
     // 🔁 ordinamento sicuro (immutabile)
-    const sortedTasks = [...filteredTasks].sort((a, b) => {
-        if (sortBy === "title") {
-            return sortOrder * a.title.localeCompare(b.title);
-        } else if (sortBy === "status") {
-            return sortOrder * a.status.localeCompare(b.status);
-        } else if (sortBy === "createdAt") {
-            return sortOrder * (new Date(a.createdAt) - new Date(b.createdAt));
+        let sortedTasks = useMemo(() => { 
+            return [...tasks]
+            .filter(t => t.title.toLowerCase().includes(search.toLowerCase()))
+            .sort((a, b) => {
+            if (sortBy === "title") {
+                return sortOrder * a.title.localeCompare(b.title);
+            } else if (sortBy === "status") {
+                return sortOrder * a.status.localeCompare(b.status);
+            } else if (sortBy === "createdAt") {
+                return sortOrder * (new Date(a.createdAt).getDate() - new Date(b.createdAt).getDate());
+            }
+            return 0;
+        })
+    },[tasks, sortBy, sortOrder, search]);
+    
+    const [selectedTaskIds, setSelectedTaskIds] = useState([]);
+
+    const toggleSelection = (taskId) => {
+        const isThereTask = selectedTaskIds.find(id => id === taskId);
+        if(isThereTask){
+            setSelectedTaskIds(selectedTaskIds.filter(id => id !== taskId))
+        }else{
+            setSelectedTaskIds(prev => [...prev, taskId])
         }
-        return 0;
-    });
+    }
+
+    const handleDelete = async () => {
+        try{
+            await removeMultipleTasks(selectedTaskIds);
+            alert("Task eleminate con successo!")
+            setSelectedTaskIds([])
+        }catch(error){
+            console.error(error);
+            alert(error.message);
+        }
+        
+    }
 
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error loading tasks.</p>;
@@ -57,6 +71,7 @@ const TaskList = () => {
         <>
             <h1 className="m-4">Lista task</h1>
 
+            <p className="m-4">{selectedTaskIds.join(", ")}</p>
             <div className="m-4">
                 <div className="d-flex justify-content-between align-items-center mt-5 mb-3">
                     <div className="d-flex">
@@ -78,8 +93,8 @@ const TaskList = () => {
                     <div className="col-4">
                         <input
                             type="text"
-                            value={search}
-                            onChange={(e) => setSearch(e.target.value)}
+                            // value={search}
+                            onChange={(e) => debounceSearch(e.target.value)}
                             placeholder="Cerca task..."
                             className="form-control"
                         />
@@ -92,23 +107,31 @@ const TaskList = () => {
                     <div className="col-4 p-2 border">Data di Creazione</div>
                 </div>
 
-                {sortedTasks.map((task) => (
-                    <div className="d-flex justify-content-between border text-dark" key={task.id}>
-                        <Link to={`/${task.id}`} className="text-decoration-none col-4 p-2 border">
-                            {task.title}
-                        </Link>
-                        <div className={`col-4 p-2 border ${task.status === "To do" ? "bg-danger" : task.status === "Doing" ? "bg-warning" : "bg-success"}`}>
-                            {task.status}
-                        </div>
-                        <div className="col-4 p-2 border">{new Date(task.createdAt).toLocaleDateString()}</div>
-                    </div>
+                
+                {sortedTasks?.map((task) => (
+                    <TaskDetail 
+                        key={task.id} 
+                        task={task} 
+                        onToggle={toggleSelection}
+                        checked={selectedTaskIds.includes(task.id)}
+                        />
                 ))}
             </div>
-
+            
+            <div className="d-flex justify-content-between">
             <button onClick={() => navigate("/add-task")} className="m-4 btn btn-secondary">
                 Add Tasks
             </button>
+            {selectedTaskIds.length > 0 &&
+            
+            <button onClick={handleDelete} className="m-4 btn btn-danger">
+                Delete Task Checked
+            </button> 
+            }
+
+            </div>
         </>
+
     );
 };
 

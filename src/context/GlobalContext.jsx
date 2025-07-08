@@ -12,7 +12,8 @@ export function GlobalProvider ({ children }) {
             loading, 
             addTask, 
             removeTask, 
-            updateTask 
+            updateTask,
+            removeMultipleTasks,
             } = useTasks();
     // const [tasks, setTasks] = useState([]);
     // const [loading, setLoading] = useState(false);
@@ -37,7 +38,7 @@ export function GlobalProvider ({ children }) {
     // }, []);
 
     return (
-        <GlobalContext.Provider value={{ tasks, loading, error, getTasks, setTasks, addTask, removeTask, updateTask }}>
+        <GlobalContext.Provider value={{ tasks, loading, error, getTasks, setTasks, addTask, removeTask, updateTask, removeMultipleTasks }}>
             {children}
         </GlobalContext.Provider>
     );

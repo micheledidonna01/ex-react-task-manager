@@ -23,7 +23,7 @@ const TaskRow = () => {
         getTasks();
     }, [])
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async(e) => {
         e.preventDefault();
         updateTask(id, updateForm);
         setUpdateForm(upForm);

@@ -1,5 +1,5 @@
 
-import axios from 'axios';
+
 import { useEffect, useState } from 'react';
 
 function useTasks() {
@@ -27,50 +27,72 @@ function useTasks() {
 
     }
 
-    const addTask = (formData) => {
-        axios.post(import.meta.env.VITE_API_URL_TASK, formData)
-            .then(res => {
-                setTasks([...tasks, res.data]);
-                alert('Task aggiunta correttamente!');
-                console.log('Task aggiunto:', res.data);
-                // torna alla lista
-            })
-            .catch(err => {
-                alert('Errore durante la creazione della Task!');
-                console.error('Errore durante il POST:', err)
+    const addTask = async (formData) => {
+        const result = await fetch(import.meta.env.VITE_API_URL_TASK, {
+            method: 'POST',
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(formData)
+        })
+        const {success, message, task} = await result.json();
+
+        if(!success) throw new Error(message);
+        setTasks(prev => [...prev, task]);
+    };
+
+    const removeTask = async (id) => {
+        const response = await fetch(`${import.meta.env.VITE_API_URL_TASK}/${id}`, {
+                method: 'DELETE'
             });
+            const {success, message} = await response.json();
+            if(!success) throw new Error(message);
+
+            setTasks(prev => prev.filter(t => t.id !== id));
+            
     };
 
-    const removeTask = (id) => {
-        axios.delete(`${import.meta.env.VITE_API_URL_TASK}/${id}`)
-            .then(res => {
-                setTasks((prev) => prev.filter(task => task.id !== parseInt(id)))
-                console.log(res.status);
-                alert('Task Eliminato con successo!')
-            })
-            .catch(err => {
-                alert('Problemi con l\'eliminazione del task');
-                console.error(err);
-            })
+    const updateTask = async(id, updateForm) => {
+        const result = await fetch(`${import.meta.env.VITE_API_URL_TASK}/${id}`, {
+            method: 'PUT',
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(updateForm)
+        })
+        const {success, message, task} = await result.json();
+        if(!success) throw new Error(message)
+        
+        setTasks(prev => prev.map(t => t.id === id ? task : t))
     };
 
-    const updateTask = (id, updateForm) => {
-        axios.put(`${import.meta.env.VITE_API_URL_TASK}/${id}`, updateForm)
-            .then(res => {
-                setTasks(tasks.map(t => {
-                    if (t.id === parseInt(id)) {
-                        return {
-                            ...t,
-                            ...updateForm
-                        }
-                    }
-                    return t;
-                }))
-                console.log(res.data);
 
+    
+    const removeMultipleTasks = async (taskIds) => {
+        const deleteRequest = taskIds.map(taskId => 
+            fetch(`${import.meta.env.VITE_API_URL_TASK}/${taskId}`, { 
+                method: 'DELETE' 
             })
-            .catch(err => console.error(err))
-    };
+            .then(res => res.json())
+        )
+
+        const results = await Promise.allSettled(deleteRequest);
+        const fulfilled = [];
+        const rejected = [];
+        results.forEach((res, index) => {
+            const taskId = taskIds[index];
+            if (res.status === 'fulfilled' && res.value.success) {
+                fulfilled.push(taskId)
+            } else {
+                rejected.push(taskId)
+            }
+        })
+        
+        if (fulfilled.length > 0) {
+            setTasks(prev => prev.filter(t => !fulfilled.includes(t.id)))
+        }
+        
+        if (rejected.length > 0) {
+            throw new Error('Errore nell\'eleminazione delle task con id:' + rejected.join(", "));
+        }
+        console.log(results);
+    }
 
 
 
@@ -86,7 +108,8 @@ function useTasks() {
         addTask,
         removeTask,
         updateTask,
-        setTasks
+        removeMultipleTasks,
+        setTasks,
     };
 }
 

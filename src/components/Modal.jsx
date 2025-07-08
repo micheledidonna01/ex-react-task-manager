@@ -1,10 +1,10 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
-
+import { createPortal } from 'react-dom';
 const Modal = ({isOpen, onClose, onConfirm, content}) => {
 
     if(!isOpen) return null;
 
-    return <>
+    return (
         
         <div className="modal-overlay d-flex justify-content-center align-items-center">
             <div className="modal-content bg-white w-50">
@@ -25,7 +25,7 @@ const Modal = ({isOpen, onClose, onConfirm, content}) => {
             </div>
         </div>
         
-    </>
+    )
 }
 
 export default Modal
