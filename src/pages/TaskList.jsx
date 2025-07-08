@@ -1,162 +1,115 @@
 import { useNavigate } from "react-router-dom";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, useCallback } from "react";
 import { GlobalContext } from "../context/GlobalContext";
-import TaskRow from "./TaskRow";
 import { Link } from "react-router-dom";
 
-const TaskList = () => {
+function debounce(callback, delay) {
+    let timer;
+    return (...args) => {
+        clearTimeout(timer);
+        timer = setTimeout(() => {
+            callback(...args);
+        }, delay);
+    };
+}
 
-    const { loading, error, getTasks, tasks, setTasks } = useContext(GlobalContext);
+const TaskList = () => {
+    const { loading, error, tasks } = useContext(GlobalContext);
     const navigate = useNavigate();
 
     const [sortBy, setSortBy] = useState("");
     const [sortOrder, setSortOrder] = useState(1);
+    const [search, setSearch] = useState("");
+    const [filteredTasks, setFilteredTasks] = useState(tasks);
 
-    const copyTasks = [...tasks];
-    console.log(copyTasks)
-    const orderByTitle = [...tasks].sort((a, b) => {
-        if (sortOrder === 1) {
-            return a.title.localeCompare(b.title)
-        } else if (sortOrder === -1) {
-            return b.title.localeCompare(a.title)
+    // 🔁 Filtro con debounce
+    const handleSearch = useCallback(
+        debounce((value) => {
+            const filtered = tasks.filter((task) =>
+                task.title.toLowerCase().includes(value.toLowerCase())
+            );
+            setFilteredTasks(filtered);
+        }, 500),
+        [tasks]
+    );
+
+    // 🔄 aggiorna filtro al cambiamento
+    useEffect(() => {
+        handleSearch(search);
+    }, [search, handleSearch]);
+
+    // 🔁 ordinamento sicuro (immutabile)
+    const sortedTasks = [...filteredTasks].sort((a, b) => {
+        if (sortBy === "title") {
+            return sortOrder * a.title.localeCompare(b.title);
+        } else if (sortBy === "status") {
+            return sortOrder * a.status.localeCompare(b.status);
+        } else if (sortBy === "createdAt") {
+            return sortOrder * (new Date(a.createdAt) - new Date(b.createdAt));
         }
+        return 0;
     });
-    console.log(orderByTitle);
-    const orderByStatus = [...tasks].sort((a, b) => {
-        if (sortOrder === 1) {
-            return a.status.localeCompare(b.status)
-        } else if (sortOrder === -1) {
-            return b.status.localeCompare(a.status)
-        }
 
-    });
-    console.log(orderByStatus)
-    const orderByData = [...tasks].sort((a, b) => {
-        const dataA = new Date(a.createdAt).getDate();
-        const dataB = new Date(b.createdAt).getDate();
-        if (sortOrder === 1) {
-            return dataA - dataB;
-        } else if (sortOrder === -1) {
-            return dataB - dataA
-        }
-    })
-    console.log(orderByData);
-    // setTasks(orderByData);
+    if (loading) return <p>Loading...</p>;
+    if (error) return <p>Error loading tasks.</p>;
 
-    // const orderFn = (e)=> {
-    //     const{value} = e.target;
-    //     console.log(value)
-    //     setSortBy(value);
-    //     console.log(sortBy)
-    //     if (sortBy === 'createdAt'){
-    //         setTasks(orderByData);
-    //     } else if (sortBy === 'title'){
-    //         setTasks(orderByTitle)
-    //     }else if( sortBy === 'status'){
-    //         setTasks(orderByStatus)
-    //     }else if( sortBy === ''){
-    //         setTasks(copyTasks)
-    //     }
-    // }
+    return (
+        <>
+            <h1 className="m-4">Lista task</h1>
 
-
-    // tasks.map((task => {
-    //     // Convert createdAt to a more readable format
-    //     task.createdAt = new Date(task.createdAt).toLocaleDateString();
-    // }));
-    // useEffect(() => {
-    //     getTasks()
-    // }, [tasks])
-
-    if (loading) {
-        return <p>Loading...</p>;
-    }
-
-    if (error) {
-        return <p>Error loading tasks.</p>;
-    }
-
-
-    return <>
-        <h1 className="m-4">Lista task</h1>
-        <div className="m-4">
-            <div className="d-flex mt-5 mb-3">
-                <div className="col-4 me-2">
-
-                    <select value={sortBy} onChange={e => setSortBy(e.target.value)} className="form-control">
-                        <option value="">---</option>
-                        <option value="createdAt">Filtra per data</option>
-                        <option value="title">Filtra per titolo</option>
-                        <option value="status">Filtra per stato</option>
-                    </select>
+            <div className="m-4">
+                <div className="d-flex justify-content-between align-items-center mt-5 mb-3">
+                    <div className="d-flex">
+                        <div className="col-6 me-2">
+                            <select value={sortBy} onChange={e => setSortBy(e.target.value)} className="form-control">
+                                <option value="">---</option>
+                                <option value="createdAt">Filtra per data</option>
+                                <option value="title">Filtra per titolo</option>
+                                <option value="status">Filtra per stato</option>
+                            </select>
+                        </div>
+                        <div className="col-6">
+                            <select value={sortOrder} onChange={e => setSortOrder(parseInt(e.target.value))} className="form-control">
+                                <option value="1">Ordine crescente</option>
+                                <option value="-1">Ordine decrescente</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div className="col-4">
+                        <input
+                            type="text"
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                            placeholder="Cerca task..."
+                            className="form-control"
+                        />
+                    </div>
                 </div>
 
-                <div className="col-4">
-
-                    <select value={sortOrder} onChange={e => setSortOrder(parseInt(e.target.value))} className="form-control">
-                        <option value="1">Ordine crescente</option>
-                        <option value="-1">Ordine decrescente</option>
-                    </select>
+                <div className="d-flex justify-content-between border">
+                    <div className="col-4 p-2 border">Nome</div>
+                    <div className="col-4 p-2 border">Stato</div>
+                    <div className="col-4 p-2 border">Data di Creazione</div>
                 </div>
 
-            </div>
-            <div className="d-flex justify-content-between border">
-                <div className="col-4 p-2 border">Nome</div>
-                <div className="col-4 p-2 border">Stato</div>
-                <div className="col-4 p-2 border">Data di Creazione</div>
+                {sortedTasks.map((task) => (
+                    <div className="d-flex justify-content-between border text-dark" key={task.id}>
+                        <Link to={`/${task.id}`} className="text-decoration-none col-4 p-2 border">
+                            {task.title}
+                        </Link>
+                        <div className={`col-4 p-2 border ${task.status === "To do" ? "bg-danger" : task.status === "Doing" ? "bg-warning" : "bg-success"}`}>
+                            {task.status}
+                        </div>
+                        <div className="col-4 p-2 border">{new Date(task.createdAt).toLocaleDateString()}</div>
+                    </div>
+                ))}
             </div>
 
-            {sortBy === 'createdAt' ? orderByData.map(task => (
-                <div className="d-flex justify-content-between border text-dark" key={task.id} >
-                    <Link to={`/${task.id}`} className="text-decoration-none col-4 p-2 border">
-                        <div>{task.title}</div>
-                    </Link>
-                    <div className={`col-4 p-2 border ${task.status === "To do" ? "bg-danger" : task.status === "Doing" ? "bg-warning" : task.status === "Done" ? "bg-success" : ""}`}>{task.status}</div>
-                    <div className="col-4 p-2 border">{new Date(task.createdAt).toLocaleDateString()}</div>
-                </div>
-
-            )) : sortBy === '' ? tasks.map(task => (
-                <div className="d-flex justify-content-between border text-dark" key={task.id} >
-                    <Link to={`/${task.id}`} className="text-decoration-none col-4 p-2 border">
-                        <div>{task.title}</div>
-                    </Link>
-                    <div className={`col-4 p-2 border ${task.status === "To do" ? "bg-danger" : task.status === "Doing" ? "bg-warning" : task.status === "Done" ? "bg-success" : ""}`}>{task.status}</div>
-                    <div className="col-4 p-2 border">{new Date(task.createdAt).toLocaleDateString()}</div>
-                </div>
-
-            )) : sortBy === 'title' ? orderByTitle.map(task => (
-                <div className="d-flex justify-content-between border text-dark" key={task.id} >
-                    <Link to={`/${task.id}`} className="text-decoration-none col-4 p-2 border">
-                        <div>{task.title}</div>
-                    </Link>
-                    <div className={`col-4 p-2 border ${task.status === "To do" ? "bg-danger" : task.status === "Doing" ? "bg-warning" : task.status === "Done" ? "bg-success" : ""}`}>{task.status}</div>
-                    <div className="col-4 p-2 border">{new Date(task.createdAt).toLocaleDateString()}</div>
-                </div>
-
-            )) : sortBy === 'status' && orderByStatus.map(task => (
-                <div className="d-flex justify-content-between border text-dark" key={task.id} >
-                    <Link to={`/${task.id}`} className="text-decoration-none col-4 p-2 border">
-                        <div>{task.title}</div>
-                    </Link>
-                    <div className={`col-4 p-2 border ${task.status === "To do" ? "bg-danger" : task.status === "Doing" ? "bg-warning" : task.status === "Done" ? "bg-success" : ""}`}>{task.status}</div>
-                    <div className="col-4 p-2 border">{new Date(task.createdAt).toLocaleDateString()}</div>
-                </div>
-
-            ))}
-        </div>
-        {/* <ul>
-            {tasks.length <= 0 ? <p>No tasks available</p> : tasks.map(task => (
-                <li key={task.id}>
-                    <h2>{task.title}</h2>
-                    <p>{task.description}</p>
-                    <p>Status: {task.status}</p>
-                    <p>Creation: {task.createdAt}</p>
-                </li>
-            ))}
-
-        </ul> */}
-        <button onClick={() => navigate('/add-task')} className="m-4 btn btn-secondary">Add Tasks</button>
-    </>
-}
+            <button onClick={() => navigate("/add-task")} className="m-4 btn btn-secondary">
+                Add Tasks
+            </button>
+        </>
+    );
+};
 
 export default TaskList;
