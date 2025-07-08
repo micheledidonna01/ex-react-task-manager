@@ -57,7 +57,7 @@ const AddTask = () => {
         getTasks();
     }, [tasks])
 
-    return <>
+    return <div className="m-4">
         <h1 className="mb-5">Aggiungi task</h1>
 
         <form className="mb-5 d-flex flex-wrap gap-3 justify-content-center" onSubmit={handleSubmit}>
@@ -97,11 +97,11 @@ const AddTask = () => {
                     <option value="Doing">Doing</option>
                 </select>
             </div>
-            <button type="submit" className="rounded" disabled={!titleIsValid}>Add Task</button>
+            <button type="submit" className="btn btn-success rounded" disabled={!titleIsValid} >Add Task</button>
         </form>
 
-        <button onClick={() => navigate('/')}>Lista tasks</button>
-    </>
+        <button onClick={() => navigate('/')} className="btn btn-outline-primary">Lista tasks</button>
+    </div>
 }
 
 export default AddTask;

@@ -1,5 +1,6 @@
 import React,{ useState } from "react"
 import { Link } from "react-router-dom"
+import dayjs from "dayjs"
 const TaskDetail = ({ task, checked, onToggle }) => {
 
     return <>
@@ -19,7 +20,7 @@ const TaskDetail = ({ task, checked, onToggle }) => {
             <div className={`col-4 p-2 border ${task.status === "To do" ? "bg-danger" : task.status === "Doing" ? "bg-warning" : "bg-success"}`}>
                 {task.status}
             </div>
-            <div className="col-4 p-2 border">{new Date(task.createdAt).toLocaleDateString()}</div>
+            <div className="col-4 p-2 border">{dayjs(task.createdAt).format("DD/MM/YYYY")}</div>
 
         </div>
     </>

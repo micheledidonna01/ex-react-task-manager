@@ -4,6 +4,7 @@ import { GlobalContext } from "../context/GlobalContext";
 import { Link } from "react-router-dom";
 import Modal from "../components/modal";
 import EditTaskModal from "../components/EditTaskModal";
+import dayjs from "dayjs";
 
 const TaskRow = () => {
     const { id } = useParams();
@@ -88,7 +89,7 @@ const TaskRow = () => {
             </div>
             {searchTask ? (
                 <div className="d-flex justify-content-between border flex-wrap" >
-                    <div className="col-6 p-2 border">{new Date(searchTask.createdAt).toLocaleDateString()}</div>
+                    <div className="col-6 p-2 border">{dayjs(searchTask.createdAt).format("DD/MM/YYYY")}</div>
                     <div className="col-6 p-2 border">{searchTask.description}</div>
                 </div>
             ) : (

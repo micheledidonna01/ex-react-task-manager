@@ -2,6 +2,8 @@ import { useNavigate } from "react-router-dom";
 import { useContext, useState, useCallback, useMemo } from "react";
 import { GlobalContext } from "../context/GlobalContext";
 import TaskDetail from "../components/TaskDetail";
+
+
 function debounce(callback, delay) {
     let timer;
     return (...args) => {
